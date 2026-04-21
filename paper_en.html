@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>The Illusion Degree Baseline Function</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500&family=Noto+Serif+TC:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f7f4ef;
+  --paper: #fdfaf5;
+  --ink: #1a1814;
+  --ink-dim: #6b6760;
+  --ink-faint: #b0ada8;
+  --accent: #7a5c3a;
+  --accent-light: rgba(122,92,58,0.07);
+  --rule: #e0dbd3;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:'Noto Serif TC',serif;font-size:15.5px;line-height:2}
+.page{max-width:740px;margin:0 auto;background:var(--paper);padding:68px 80px 92px;min-height:100vh;box-shadow:0 2px 40px rgba(0,0,0,0.06)}
+.paper-header{border-bottom:2px solid var(--ink);padding-bottom:30px;margin-bottom:38px}
+.journal-label{font-family:'Noto Sans TC',sans-serif;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:18px}
+.paper-title{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;line-height:1.25;margin-bottom:9px}
+.paper-subtitle{font-family:'Playfair Display',serif;font-style:italic;font-size:1rem;color:var(--ink-dim);margin-bottom:26px}
+.paper-meta{font-family:'Noto Sans TC',sans-serif;font-size:11.5px;color:var(--ink-dim);display:flex;gap:20px;flex-wrap:wrap}
+.abstract-block{background:var(--accent-light);border-left:3px solid var(--accent);padding:18px 22px;margin-bottom:42px;border-radius:0 4px 4px 0}
+.abstract-label{font-family:'Noto Sans TC',sans-serif;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);margin-bottom:9px}
+.abstract-text{font-size:13.5px;line-height:1.9;color:var(--ink-dim)}
+.section{margin-bottom:42px}
+.section-num{font-family:'Noto Sans TC',sans-serif;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-bottom:5px}
+.section h2{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;margin-bottom:15px;border-bottom:1px solid var(--rule);padding-bottom:7px}
+.section h3{font-family:'Noto Sans TC',sans-serif;font-size:13px;font-weight:500;letter-spacing:.04em;color:var(--accent);margin:22px 0 9px}
+p{margin-bottom:13px;text-align:justify}
+.key-term{font-style:italic;color:var(--accent)}
+.cite-inline{font-family:'Noto Sans TC',sans-serif;font-size:11px;color:var(--ink-dim);vertical-align:super}
+.def-box{border:1px solid var(--rule);border-radius:6px;padding:18px 22px;margin:22px 0;background:#faf8f3}
+.def-box-title{font-family:'Noto Sans TC',sans-serif;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:11px}
+.def-row{display:flex;gap:11px;margin-bottom:7px;font-size:13.5px}
+.def-label{font-family:'Noto Sans TC',sans-serif;font-weight:500;color:var(--accent);min-width:26px;flex-shrink:0}
+.def-content{color:var(--ink-dim);line-height:1.7}
+.figure-wrap{margin:32px 0}
+.figure-caption{font-family:'Noto Sans TC',sans-serif;font-size:11.5px;color:var(--ink-dim);margin-top:13px;text-align:center;line-height:1.65}
+.figure-caption strong{color:var(--ink)}
+/* Formula styles */
+.formula-block{background:#faf6f0;border:1px solid #d8cfc4;border-radius:6px;padding:18px 22px;margin:20px 0}
+.formula-main{font-family:'Georgia',serif;font-size:15px;color:var(--ink);letter-spacing:.02em;margin-bottom:8px}
+.formula-note{font-family:'Noto Sans TC',sans-serif;font-size:12px;color:var(--ink-dim);line-height:1.7}
+.term-block{border-left:2px solid var(--rule);padding:0 0 14px 16px;margin:18px 0}
+.term-label{font-family:'Noto Sans TC',sans-serif;font-weight:500;font-size:13px;color:var(--accent);margin-bottom:7px}
+.formula-sub{font-family:'Georgia',serif;font-size:13.5px;color:var(--ink);margin-bottom:9px;padding:6px 10px;background:#faf8f3;border-radius:4px;display:inline-block}
+.param-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:12.5px;font-family:'Noto Sans TC',sans-serif}
+.param-table th{background:var(--accent-light);color:var(--accent);font-weight:500;padding:8px 12px;text-align:left;border-bottom:2px solid var(--rule);letter-spacing:.03em}
+.param-table td{padding:7px 12px;border-bottom:1px solid var(--rule);color:var(--ink-dim);line-height:1.6;vertical-align:top}
+.param-table tr:last-child td{border-bottom:none}
+.param-table tr:hover td{background:var(--accent-light)}
+.constraint-list{margin:14px 0}
+.constraint{font-family:'Georgia',serif;font-size:13.5px;color:var(--ink);padding:6px 12px;background:#faf8f3;border-radius:4px;margin-bottom:4px;display:block}
+.constraint-note{font-family:'Noto Sans TC',sans-serif;font-size:11.5px;color:var(--ink-dim);padding:2px 12px 10px;display:block}
+.stage-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:12.5px;font-family:'Noto Sans TC',sans-serif}
+.stage-table th{background:var(--accent-light);color:var(--accent);font-weight:500;padding:8px 12px;text-align:left;border-bottom:2px solid var(--rule)}
+.stage-table td{padding:8px 12px;border-bottom:1px solid var(--rule);color:var(--ink-dim);line-height:1.6;vertical-align:top}
+.stage-table tr:last-child td{border-bottom:none}
+.stage-table tr:hover td{background:var(--accent-light)}
+.perturbation-item{display:flex;gap:14px;padding:13px 0;border-bottom:1px solid var(--rule)}
+.perturbation-item:last-child{border-bottom:none}
+.pert-icon{font-size:17px;min-width:26px;padding-top:2px}
+.pert-body{flex:1}
+.pert-title{font-family:'Noto Sans TC',sans-serif;font-weight:500;font-size:13px;color:var(--ink);margin-bottom:3px}
+.pert-desc{font-size:13px;color:var(--ink-dim);line-height:1.75;margin:0}
+.footnote-section{border-top:1px solid var(--rule);margin-top:52px;padding-top:22px}
+.footnote-section h4{font-family:'Noto Sans TC',sans-serif;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:15px}
+.footnote-list{list-style:none;counter-reset:fn}
+.footnote-list li{counter-increment:fn;display:flex;gap:9px;font-size:11.5px;font-family:'Noto Sans TC',sans-serif;color:var(--ink-dim);padding:5px 0;border-bottom:1px solid var(--rule);line-height:1.65}
+.footnote-list li:last-child{border-bottom:none}
+.footnote-list li::before{content:counter(fn);color:var(--accent);font-size:10px;min-width:16px;padding-top:3px;opacity:.7}
+@media(max-width:640px){.page{padding:36px 20px 60px}.paper-title{font-size:1.4rem}}
+
+body { font-family: Georgia, 'Times New Roman', serif; }
+.section h3 { font-family: 'Helvetica Neue', Arial, sans-serif; }
+.journal-label, .paper-meta, .abstract-label, .section-num, .def-box-title, .term-label, .param-table, .footnote-section h4, .footnote-list li { font-family: 'Helvetica Neue', Arial, sans-serif; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header class="paper-header">
+  <div class="journal-label">Overthink Notes · Working Paper · 2026</div>
+  <h1 class="paper-title">The Illusion Degree Baseline Function in Romantic Relationships</h1>
+  <p class="paper-subtitle">A Theoretical Framework for the Cognitive Structure of Love</p>
+  <div class="paper-meta">
+    <span>Keywords: illusion degree, relationship stages, idealization bias, asymptote, perturbation events</span>
+  </div>
+</header>
+
+<div class="abstract-block">
+  <div class="abstract-label">Abstract</div>
+  <p class="abstract-text">This paper proposes a theoretical framework describing how illusion degree — the proportion of projection, idealization, and information-filling in one's perception of a romantic partner — changes across relationship stages, and presents a composite mathematical function as its baseline model. The central propositions are: illusion degree decreases non-linearly as relationships deepen, but never falls below a positive asymptote ε (the minimum illusion necessary to sustain a relationship); each stage transition is accompanied by a brief honeymoon rebound followed by a lower baseline; the secret crush stage constitutes the global maximum because illusions there are never subjected to reality testing; and post-bereavement memorial illusions produce a secondary rise driven by the Fading Affect Bias. Section 3 provides complete formula derivation and parameter definitions. This framework is speculative-theoretical and currently lacks an empirical quantification basis; it is grounded in existing psychological and philosophical literature and is intended to provide structural scaffolding for future research.</p>
+</div>
+
+<section class="section">
+  <div class="section-num">Section 1</div>
+  <h2>Theoretical Background</h2>
+  <p>Human perception of romantic partners has never been an accurate mapping of reality. Murray and Holmes found that the most satisfied couples systematically overestimate each other's positive qualities — even in long-term marriages — and that this idealization tendency has functional value.<span class="cite-inline">[1]</span> Completely de-illusioned relationships tend to be more fragile, because illusions serve as emotional buffers.</p>
+  <p>Philosophically, Proust described love as a form of <span class="key-term">epistemological failure</span>: lovers believe they are coming to know their partner, but are in fact perpetually chasing a version that has already moved on.<span class="cite-inline">[2]</span> This resonates with Kant's concept of the <span class="key-term">Ding an sich</span> — we can only ever access the phenomenal layer of things, never their essence, and other persons are no exception.<span class="cite-inline">[3]</span> Illusion is therefore not merely a cognitive bias but a <span class="key-term">structural constraint</span> on knowing another person at all.</p>
+  <p>Frankfurt, writing from volitional philosophy, defines love as a form of caring: to love someone is for their wellbeing to become part of the structure of your will.<span class="cite-inline">[4]</span> Under this definition, illusion functions as the directional marker of volitional investment — what you care about is first the image of the person in your mind, not the totality of their actual self. Together, these accounts point toward an unresolved question: how does illusion degree change as relationships deepen, and does its trajectory have describable regularity? This paper attempts a framework-level answer.</p>
+</section>
+
+<section class="section">
+  <div class="section-num">Section 2</div>
+  <h2>Baseline Function Definitions</h2>
+  <p>The baseline function describes a <span class="key-term">statistically general trend</span>, not any individual's actual trajectory. Individual variation (attachment style, relationship history, degree of self-awareness, etc.) is handled by a scaling coefficient k and kept out of the baseline curve.</p>
+  <div class="def-box">
+    <div class="def-box-title">Variable Definitions</div>
+    <div class="def-row"><span class="def-label">X</span><span class="def-content">Relationship stage (continuous): Strangers → Secret Crush → Romance → Marriage → Bereavement → Post-loss</span></div>
+    <div class="def-row"><span class="def-label">I(x)</span><span class="def-content">Illusion Degree: higher values indicate more projection, idealization, and information-filling in one's perception; lower values indicate closer proximity to the partner's actual reality.</span></div>
+    <div class="def-row"><span class="def-label">ε</span><span class="def-content">Positive asymptote: the theoretical lower bound of I(x), representing the minimum illusion necessary to sustain a romantic relationship. The function approaches but never crosses ε.</span></div>
+    <div class="def-row"><span class="def-label">k</span><span class="def-content">Individual scaling coefficient: scales the amplitude of the curve without changing its shape or directional structure.</span></div>
+    <div class="def-row"><span class="def-label">P</span><span class="def-content">Perturbation parameter: local disturbances from non-linear events (infidelity, long-distance, etc.) handled independently, not incorporated into the baseline.</span></div>
+  </div>
+  <p>The overall curve is <span class="key-term">non-linearly decreasing</span> but not monotone: each stage transition produces a brief honeymoon rebound followed by a return to a lower baseline, forming a downward-trending asymmetric sawtooth. The secret crush stage constitutes the global peak, with only a very slow internal decline (no honeymoon rebound), because it has never been subjected to any reality testing.</p>
+</section>
+
+<div class="figure-wrap">
+  <svg viewBox="0 0 860 500" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block">
+  <defs>
+    <marker id="arr" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L7,3 z" fill="#1a1814" opacity="0.6"/>
+    </marker>
+  </defs>
+  <rect width="860" height="500" fill="#fdfaf5"/>
+
+  <!-- Title -->
+  <text x="430" y="28" font-family="Georgia,serif" font-style="italic" font-size="13.5" fill="#1a1814" text-anchor="middle" opacity="0.85">Illusion Degree Baseline Function in Romantic Relationships</text>
+  <text x="430" y="44" font-family="Helvetica Neue,Arial,sans-serif" font-size="9.5" fill="#9a948c" text-anchor="middle" letter-spacing="0.05em">Working Paper · 2026</text>
+
+  <!-- Grid -->
+  <line x1="100" y1="60" x2="820" y2="60" stroke="#e0dbd3" stroke-width="1" stroke-dasharray="3,5"/>
+  <line x1="100" y1="143" x2="820" y2="143" stroke="#e0dbd3" stroke-width="1" stroke-dasharray="3,5"/>
+  <line x1="100" y1="228" x2="820" y2="228" stroke="#e0dbd3" stroke-width="1" stroke-dasharray="3,5"/>
+  <line x1="100" y1="315" x2="820" y2="315" stroke="#e0dbd3" stroke-width="1" stroke-dasharray="3,5"/>
+
+  <!-- ε asymptote -->
+  <line x1="100" y1="372.8" x2="820" y2="372.8" stroke="#7a5c3a" stroke-width="1.2" stroke-dasharray="7,5" opacity="0.55"/>
+  <text x="826" y="376.8" font-family="Georgia,serif" font-style="italic" font-size="13" fill="#7a5c3a" opacity="0.85">ε</text>
+  <text x="104" y="367.8" font-family="Helvetica Neue,Arial,sans-serif" font-size="8.5" fill="#7a5c3a" opacity="0.6">min. illusion threshold</text>
+
+  <!-- Axes -->
+  <line x1="100" y1="415" x2="100" y2="52" stroke="#1a1814" stroke-width="1.6" marker-end="url(#arr)" opacity="0.65"/>
+  <line x1="90" y1="400" x2="830" y2="400" stroke="#1a1814" stroke-width="1.6" marker-end="url(#arr)" opacity="0.65"/>
+
+  <!-- Y axis label -->
+  <text transform="rotate(-90,26,230)" x="26" y="230" font-family="Helvetica Neue,Arial,sans-serif" font-size="10.5" fill="#6b6760" text-anchor="middle" letter-spacing="0.07em">ILLUSION DEGREE</text>
+  <text x="90" y="64" font-family="Helvetica Neue,Arial,sans-serif" font-size="9" fill="#b0ada8" text-anchor="end">High</text>
+  <text x="90" y="320" font-family="Helvetica Neue,Arial,sans-serif" font-size="9" fill="#b0ada8" text-anchor="end">Low</text>
+  <text x="90" y="376.8" font-family="Georgia,serif" font-style="italic" font-size="10" fill="#7a5c3a" text-anchor="end" opacity="0.75">ε</text>
+
+  <!-- Stage dividers -->
+  <line x1="155.4" y1="400" x2="155.4" y2="406" stroke="#b0ada8" stroke-width="1.1"/>
+  <line x1="266.2" y1="400" x2="266.2" y2="406" stroke="#b0ada8" stroke-width="1.1"/>
+  <line x1="432.3" y1="400" x2="432.3" y2="406" stroke="#b0ada8" stroke-width="1.1"/>
+  <line x1="653.8" y1="400" x2="653.8" y2="406" stroke="#b0ada8" stroke-width="1.1"/>
+  <line x1="709.2" y1="400" x2="709.2" y2="406" stroke="#b0ada8" stroke-width="1.1"/>
+
+  <!-- Stage labels -->
+  <text x="127.7" y="420" font-family="Helvetica Neue,Arial,sans-serif" font-size="9.5" fill="#6b6760" text-anchor="middle">Strangers</text>
+  <text x="210.8" y="420" font-family="Helvetica Neue,Arial,sans-serif" font-size="9.5" fill="#6b6760" text-anchor="middle">Secret Crush</text>
+  <text x="349.2" y="420" font-family="Helvetica Neue,Arial,sans-serif" font-size="9.5" fill="#6b6760" text-anchor="middle">Romance</text>
+  <text x="543.1" y="420" font-family="Helvetica Neue,Arial,sans-serif" font-size="9.5" fill="#6b6760" text-anchor="middle">Marriage</text>
+  <text x="681.5" y="420" font-family="Helvetica Neue,Arial,sans-serif" font-size="9.5" fill="#6b6760" text-anchor="middle">Bereavement</text>
+  <text x="764.6" y="420" font-family="Helvetica Neue,Arial,sans-serif" font-size="9.5" fill="#6b6760" text-anchor="middle">Post-loss</text>
+
+  <!-- X axis label -->
+  <text x="460" y="445" font-family="Helvetica Neue,Arial,sans-serif" font-size="10.5" fill="#6b6760" text-anchor="middle" letter-spacing="0.06em">RELATIONSHIP STAGE</text>
+
+  <!-- Main curve -->
+  <path d="M 100.0,223.3 L 102.8,221.1 L 105.6,218.8 L 108.3,216.3 L 111.1,213.6 L 113.9,210.7 L 116.7,207.7 L 119.5,204.5 L 122.2,201.1 L 125.0,197.6 L 127.8,194.0 L 130.6,190.3 L 133.4,186.4 L 136.1,182.4 L 138.9,178.4 L 141.7,174.2 L 144.5,170.0 L 147.3,165.8 L 150.0,161.5 L 152.8,157.2 L 155.6,153.0 L 158.4,148.8 L 161.2,144.6 L 163.9,140.6 L 166.7,136.6 L 169.5,132.8 L 172.3,129.1 L 175.1,125.7 L 177.8,122.4 L 180.6,119.3 L 183.4,116.5 L 186.2,113.9 L 189.0,111.6 L 191.7,109.7 L 194.5,108.0 L 197.3,106.6 L 200.1,105.6 L 202.9,105.0 L 205.6,104.7 L 208.4,104.7 L 211.2,105.2 L 214.0,105.9 L 216.8,107.1 L 219.5,108.6 L 222.3,110.5 L 225.1,112.7 L 227.9,115.2 L 230.7,118.1 L 233.4,121.2 L 236.2,124.7 L 239.0,128.4 L 241.8,132.2 L 244.6,136.2 L 247.3,140.2 L 250.1,144.1 L 252.9,147.6 L 255.7,150.4 L 258.5,152.3 L 261.2,153.0 L 264.0,152.4 L 266.8,150.5 L 269.6,147.7 L 272.4,144.7 L 275.1,142.2 L 277.9,141.3 L 280.7,142.8 L 283.5,148.4 L 286.3,159.7 L 289.0,172.8 L 291.8,186.6 L 294.6,200.0 L 297.4,212.4 L 300.2,223.4 L 302.9,232.7 L 305.7,240.5 L 308.5,246.9 L 311.3,252.4 L 314.1,257.1 L 316.8,261.2 L 319.6,264.9 L 322.4,268.3 L 325.2,271.5 L 328.0,274.4 L 330.7,277.2 L 333.5,279.9 L 336.3,282.4 L 339.1,284.7 L 341.9,286.9 L 344.6,288.9 L 347.4,290.9 L 350.2,292.7 L 353.0,294.4 L 355.8,296.0 L 358.5,297.4 L 361.3,298.8 L 364.1,300.1 L 366.9,301.3 L 369.7,302.5 L 372.4,303.5 L 375.2,304.5 L 378.0,305.4 L 380.8,306.3 L 383.6,307.1 L 386.3,307.9 L 389.1,308.6 L 391.9,309.3 L 394.7,309.9 L 397.5,310.5 L 400.2,311.1 L 403.0,311.6 L 405.8,312.0 L 408.6,312.4 L 411.4,312.7 L 414.1,312.7 L 416.9,312.3 L 419.7,311.4 L 422.5,309.7 L 425.3,307.1 L 428.0,303.2 L 430.8,298.1 L 433.6,291.8 L 436.4,284.8 L 439.2,277.8 L 441.9,271.4 L 444.7,266.7 L 447.5,264.2 L 450.3,266.0 L 453.1,271.6 L 455.8,278.9 L 458.6,286.9 L 461.4,294.8 L 464.2,301.9 L 466.9,307.8 L 469.7,312.5 L 472.5,316.0 L 475.3,318.4 L 478.1,320.1 L 480.8,321.2 L 483.6,322.0 L 486.4,322.5 L 489.2,322.9 L 492.0,323.3 L 494.7,323.6 L 497.5,323.9 L 500.3,324.2 L 503.1,324.5 L 505.9,324.8 L 508.6,325.1 L 511.4,325.4 L 514.2,325.7 L 517.0,326.0 L 519.8,326.2 L 522.5,326.5 L 525.3,326.8 L 528.1,327.1 L 530.9,327.4 L 533.7,327.6 L 536.4,327.9 L 539.2,328.2 L 542.0,328.4 L 544.8,328.7 L 547.6,329.0 L 550.3,329.2 L 553.1,329.5 L 555.9,329.8 L 558.7,330.0 L 561.5,330.3 L 564.2,330.5 L 567.0,330.8 L 569.8,331.0 L 572.6,331.3 L 575.4,331.5 L 578.1,331.8 L 580.9,332.0 L 583.7,332.3 L 586.5,332.5 L 589.3,332.8 L 592.0,333.0 L 594.8,333.2 L 597.6,333.5 L 600.4,333.7 L 603.2,334.0 L 605.9,334.3 L 608.7,334.6 L 611.5,334.9 L 614.3,335.2 L 617.1,335.6 L 619.8,336.0 L 622.6,336.5 L 625.4,337.1 L 628.2,337.9 L 631.0,338.7 L 633.7,339.8 L 636.5,341.0 L 639.3,342.4 L 642.1,344.0 L 644.9,345.9 L 647.6,348.1 L 650.4,350.4 L 653.2,352.9 L 656.0,355.6 L 658.8,358.4 L 661.5,361.2 L 664.3,363.9 L 667.1,366.5 L 669.9,368.8 L 672.7,370.8 L 675.4,372.3 L 678.2,372.8 L 681.0,372.8 L 683.8,372.8 L 686.6,372.8 L 689.3,372.5 L 692.1,371.1 L 694.9,369.3 L 697.7,367.2 L 700.5,349.9 L 703.2,346.0 L 706.0,342.1 L 708.8,338.2 L 711.6,334.4 L 714.4,330.7 L 717.1,327.3 L 719.9,324.0 L 722.7,321.1 L 725.5,318.3 L 728.3,315.9 L 731.0,313.7 L 733.8,311.7 L 736.6,310.0 L 739.4,308.5 L 742.2,307.3 L 744.9,306.3 L 747.7,305.5 L 750.5,304.9 L 753.3,304.5 L 756.1,304.3 L 758.8,304.3 L 761.6,304.6 L 764.4,305.0 L 767.2,305.6 L 770.0,306.3 L 772.7,307.2 L 775.5,308.3 L 778.3,309.6 L 781.1,310.9 L 783.9,312.4 L 786.6,314.0 L 789.4,315.6 L 792.2,317.3 L 795.0,319.1 L 797.8,320.9 L 800.5,322.7 L 803.3,324.5 L 806.1,326.3 L 808.9,328.0 L 811.7,329.8 L 814.4,331.4 L 817.2,333.0 L 820.0,334.6" fill="none" stroke="#1a1814" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Crush peak annotation -->
+  <circle cx="206.4" cy="104.7" r="3.5" fill="#1a1814" opacity="0.5"/>
+  <line x1="206.4" y1="100.7" x2="206.4" y2="76.7" stroke="#1a1814" stroke-width="0.9" stroke-dasharray="2,3" opacity="0.35"/>
+  <text x="210.4" y="74.7" font-family="Helvetica Neue,Arial,sans-serif" font-size="8.5" fill="#6b6760" opacity="0.85">Global peak</text>
+
+  <!-- Romance honeymoon annotation -->
+  <circle cx="282.8" cy="141.3" r="3" fill="#7a5c3a" opacity="0.7"/>
+  <line x1="282.8" y1="137.3" x2="282.8" y2="115.3" stroke="#7a5c3a" stroke-width="0.9" stroke-dasharray="2,2" opacity="0.5"/>
+  <text x="286.8" y="113.3" font-family="Helvetica Neue,Arial,sans-serif" font-size="8.5" fill="#7a5c3a" opacity="0.85">Honeymoon↑</text>
+
+  <!-- Marriage honeymoon annotation -->
+  <circle cx="448.9" cy="264.0" r="3" fill="#7a5c3a" opacity="0.7"/>
+  <line x1="448.9" y1="260.0" x2="448.9" y2="238.0" stroke="#7a5c3a" stroke-width="0.9" stroke-dasharray="2,2" opacity="0.5"/>
+  <text x="452.9" y="236.0" font-family="Helvetica Neue,Arial,sans-serif" font-size="8.5" fill="#7a5c3a" opacity="0.85">Honeymoon↑</text>
+
+  <!-- Memorial illusion annotation -->
+  <circle cx="759.1" cy="304.3" r="3" fill="#2d5a3d" opacity="0.7"/>
+  <line x1="759.1" y1="300.3" x2="759.1" y2="278.3" stroke="#2d5a3d" stroke-width="0.9" stroke-dasharray="2,2" opacity="0.5"/>
+  <text x="707.1" y="276.3" font-family="Helvetica Neue,Arial,sans-serif" font-size="8.5" fill="#2d5a3d" opacity="0.85">Memorial↑</text>
+
+  <!-- k note -->
+  <text x="108" y="80" font-family="Georgia,serif" font-style="italic" font-size="10.5" fill="#c0bdb8">k = individual coefficient (scales amplitude)</text>
+
+</svg>
+  <p class="figure-caption"><strong>Figure 1. Illusion Degree Baseline Function in Romantic Relationships</strong><br>
+  X-axis: relationship stage. Y-axis: illusion degree. Dashed line ε: positive asymptote (minimum illusion threshold). Secret Crush is the global peak. Romance and Marriage entries each carry a honeymoon rebound with successively lower peak values. Post-loss stage shows the memorial illusion secondary rise. Curve shown for k = 1 (baseline individual).</p>
+</div>
+
+
+  <!-- FORMULA SECTION EN -->
+  <section class="section">
+    <div class="section-num">Section 3</div>
+    <h2>Formula Derivation and Parameter Definitions</h2>
+
+    <h3>3.1　The Full Formula</h3>
+    <p>The baseline function is composed of six additive terms:</p>
+
+    <div class="formula-block">
+      <div class="formula-main">I(x) = ε + k · [ D(x) + P(x) + H₁(x) + H₂(x) + B(x) + M(x) ]</div>
+      <div class="formula-note">Where I(x) is illusion degree, x is relationship stage (continuous parameter, 0–13), ε is the positive asymptote, and k is the individual scaling coefficient.</div>
+    </div>
+
+    <h3>3.2　Term Definitions</h3>
+
+    <div class="term-block">
+      <div class="term-label">D(x)　Baseline Decay</div>
+      <div class="formula-sub">D(x) = (A₀ − ε) · e<sup>−αx</sup></div>
+      <p>Models the overall exponential decay of illusion degree as the relationship progresses. A₀ is the initial illusion baseline at the Strangers stage; α is the decay rate. The decay approaches ε rather than zero, enforcing the positive asymptote constraint.</p>
+    </div>
+
+    <div class="term-block">
+      <div class="term-label">P(x)　Secret Crush Global Peak</div>
+      <div class="formula-sub">P(x) = A · exp(−(x − μ<sub>c</sub>)² / (2σ<sub>c</sub>²))</div>
+      <p>A standard Gaussian kernel modeling the illusion peak during the secret crush stage. A is the peak amplitude; μ<sub>c</sub> is the peak location (mid-crush); σ<sub>c</sub> is the width parameter. This term produces the global maximum of the entire function, because the secret crush is the only stage in which illusions are never subjected to reality testing.</p>
+    </div>
+
+    <div class="term-block">
+      <div class="term-label">H₁(x), H₂(x)　Honeymoon Rebound Terms</div>
+      <div class="formula-sub">Hᵢ(x) = hᵢ · exp(−(x − μᵢ)² / (2σᵢ²)) · exp(−λᵢ · max(0, x − μᵢ))</div>
+      <p>Asymmetric peak functions: a Gaussian kernel (modeling the rapid honeymoon rise) multiplied by a one-sided exponential decay (modeling the subsequent replacement of illusions by reality). H₁ corresponds to the Romance-entry honeymoon; H₂ to the Marriage-entry honeymoon. Constraint: h₁ &gt; h₂, and both peak values fall below the global maximum of P(x).</p>
+    </div>
+
+    <div class="term-block">
+      <div class="term-label">B(x)　Bereavement Drop</div>
+      <div class="formula-sub">B(x) = −b · exp(−(x − μ<sub>b</sub>)² / (2σ<sub>b</sub>²))</div>
+      <p>A negative Gaussian kernel modeling the sharp illusion drop at bereavement. This term drives I(x) toward or near the asymptote ε — bereavement is one of the few points in the function where reality intervenes unavoidably, destabilizing previously constructed illusion structures.</p>
+    </div>
+
+    <div class="term-block">
+      <div class="term-label">M(x)　Memorial Illusion</div>
+      <div class="formula-sub">M(x) = m · exp(−(x − μ<sub>m</sub>)² / (2σ<sub>m</sub>²)) · 𝟙(x ≥ x<sub>bereave</sub>)</div>
+      <p>A positive Gaussian kernel with a step-function constraint (active only after bereavement), modeling the secondary illusion rise driven by the Fading Affect Bias — the tendency for memory to disproportionately preserve positive emotional content. Unlike honeymoon illusions, this rise is commemorative rather than anticipatory: it points toward a sealed past, not an open future, and therefore forms a stable plateau rather than decaying further.</p>
+    </div>
+
+    <h3>3.3　Baseline Parameter Estimates</h3>
+    <p>The following parameters are theoretically derived baseline values (k = 1), not empirically fitted results, and are subject to revision pending future longitudinal research.</p>
+
+    <table class="param-table">
+      <thead>
+        <tr><th>Parameter</th><th>Symbol</th><th>Baseline</th><th>Meaning</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Positive asymptote</td><td>ε</td><td>0.08</td><td>Minimum necessary illusion (8% floor)</td></tr>
+        <tr><td>Initial baseline</td><td>A₀</td><td>0.42</td><td>Illusion level at Strangers stage</td></tr>
+        <tr><td>Baseline decay rate</td><td>α</td><td>0.12</td><td>Rate of exponential baseline decay</td></tr>
+        <tr><td>Crush peak amplitude</td><td>A</td><td>0.52</td><td>Illusion contribution of global peak</td></tr>
+        <tr><td>Crush peak location</td><td>μ<sub>c</sub></td><td>2.0</td><td>Continuous x-axis coordinate</td></tr>
+        <tr><td>Crush peak width</td><td>σ<sub>c</sub></td><td>1.1</td><td>Temporal span of crush stage</td></tr>
+        <tr><td>Romance honeymoon amplitude</td><td>h₁</td><td>0.18</td><td>Below crush peak, above marriage honeymoon</td></tr>
+        <tr><td>Romance honeymoon location</td><td>μ₁</td><td>3.3</td><td>Romance entry point</td></tr>
+        <tr><td>Romance decay rate</td><td>λ₁</td><td>1.4</td><td>Post-honeymoon decay (fastest stage)</td></tr>
+        <tr><td>Marriage honeymoon amplitude</td><td>h₂</td><td>0.16</td><td>Below romance honeymoon</td></tr>
+        <tr><td>Marriage honeymoon location</td><td>μ₂</td><td>6.3</td><td>Marriage entry point</td></tr>
+        <tr><td>Marriage decay rate</td><td>λ₂</td><td>1.1</td><td>Post-honeymoon decay (slower)</td></tr>
+        <tr><td>Bereavement drop amplitude</td><td>b</td><td>0.10</td><td>Negative shock intensity</td></tr>
+        <tr><td>Memorial illusion amplitude</td><td>m</td><td>0.12</td><td>Memory-beautification strength</td></tr>
+        <tr><td>Memorial illusion location</td><td>μ<sub>m</sub></td><td>11.9</td><td>Mid post-loss stage</td></tr>
+      </tbody>
+    </table>
+
+    <h3>3.4　X-Axis Stage Encoding</h3>
+    <p>The discrete relationship stages are mapped to a continuous x parameter to support the mathematical formulation:</p>
+    <table class="param-table">
+      <thead><tr><th>Stage</th><th>x Range</th><th>Key x Values</th></tr></thead>
+      <tbody>
+        <tr><td>Strangers</td><td>0 – 1</td><td>—</td></tr>
+        <tr><td>Secret Crush</td><td>1 – 3</td><td>μ<sub>c</sub> = 2.0 (peak)</td></tr>
+        <tr><td>Romance</td><td>3 – 6</td><td>μ₁ = 3.3 (honeymoon entry)</td></tr>
+        <tr><td>Marriage</td><td>6 – 10</td><td>μ₂ = 6.3 (honeymoon entry)</td></tr>
+        <tr><td>Bereavement</td><td>10 – 11</td><td>μ<sub>b</sub> = 10.5 (drop center)</td></tr>
+        <tr><td>Post-loss</td><td>11 – 13</td><td>μ<sub>m</sub> = 11.9 (memorial peak)</td></tr>
+      </tbody>
+    </table>
+
+    <h3>3.5　Structural Constraints</h3>
+    <p>The following ordering relations are structural constraints — they must hold regardless of specific parameter values:</p>
+    <div class="constraint-list">
+      <div class="constraint">max[P(x)] &gt; max[H₁(x)] &gt; max[H₂(x)] &gt; 0</div>
+      <div class="constraint-note">Crush global peak &gt; Romance honeymoon peak &gt; Marriage honeymoon peak</div>
+      <div class="constraint">I(x) &gt; ε for all x (bereavement nadir may approach but not cross ε)</div>
+      <div class="constraint">M(x) = 0 when x &lt; x<sub>bereave</sub></div>
+      <div class="constraint-note">Memorial illusion is only active after bereavement</div>
+      <div class="constraint">λ₁ &gt; λ₂ (Romance honeymoon decays faster than Marriage honeymoon)</div>
+    </div>
+  </section>
+
+
+<section class="section">
+  <div class="section-num">Section 4</div>
+  <h2>Stage-by-Stage Psychological Mechanisms</h2>
+
+  <h3>4.0　The Cumulative Effect of Relationship Experience: Declining Honeymoon Peaks</h3>
+  <p>One of the most important concrete expressions of the individual coefficient k is that <span class="key-term">accumulated relationship experience systematically lowers the honeymoon peak in each new relationship</span>. The first romantic relationship produces the highest, longest-lasting honeymoon illusion of a person's life: the nervous system is activated for the first time with no defensive mechanisms and no reference frame. Each subsequent relationship updates the internal cognitive schema — you begin to anticipate the contraction of illusions before they have fully expanded, and that anticipation occupies the very space the illusion would otherwise fill.<span class="cite-inline">[10]</span></p>
+
+  <h3>4.1　Strangers Stage</h3>
+  <p>Illusion degree at the Strangers stage is not zero: the human pattern-recognition system automatically maps potential romantic objects onto existing internal archetypes (what Jung called the Anima/Animus).<span class="cite-inline">[5]</span> The curve starts above ε but in a relatively low range — significantly below the Secret Crush stage. As romantic intent forms, the curve trends upward toward the global peak.</p>
+
+  <h3>4.2　Secret Crush Stage (Global Peak)</h3>
+  <p>The Secret Crush stage carries the <span class="key-term">highest illusion degree</span> in the entire function, and is uniquely characterized as the stage in which illusions are <span class="key-term">most sustained and least replaced by reality</span>. The structural conditions of a secret crush — the other party is unaware, information is incomplete, the relationship has never been tested — collectively form a preservative barrier that holds illusions at a stable high plateau with only an extremely slow natural decline. There is no honeymoon rebound in the Secret Crush stage because nothing has disrupted it. It is the original dream, factory-sealed, never opened.</p>
+  <p>Additionally, <span class="key-term">proximal impossibility</span> — physical proximity combined with relational impossibility — generates higher illusion intensity than remote structural impossibility (e.g., a celebrity crush). The former creates the Tantalus tension of "almost reachable," which becomes the energy source sustaining illusion growth.</p>
+
+  <h3>4.3　Romance Stage</h3>
+  <p>The Romance entry is the most pronounced honeymoon rebound in the function. The excitement of finally having access activates a new cycle of illusion construction — but the peak is lower than the stable Secret Crush level, because some reality is already known. Fisher's neuroimaging research shows that the dopamine reward circuitry active during early romance overlaps significantly with addiction mechanisms,<span class="cite-inline">[6]</span> explaining why the most intensely felt stage is also the stage of most rapid illusion replacement: the reality of sensation and the accuracy of cognition diverge most dramatically here.</p>
+
+  <h3>4.4　Marriage Stage</h3>
+  <p>Marriage entry carries another honeymoon rebound with a peak lower than the Romance entry. Murray's research supports the functional role of moderate illusion in long-term relationships.<span class="cite-inline">[1]</span> Levinas's concept of the "resistance of the Other" continues to operate here:<span class="cite-inline">[7]</span> the partner always has a dimension you don't know, and this is precisely the evidence that she exists rather than being fully possessed by you.</p>
+
+  <h3>4.5　Bereavement and Post-loss Stages</h3>
+  <p>Bereavement produces a sharp illusion drop, one of the function's lowest points, approaching ε. The Post-loss stage then exhibits the <span class="key-term">memorial illusion secondary rise</span>: death severs the possibility of further reality input, memory takes over, and the Fading Affect Bias causes negative emotional memories to decay faster than positive ones,<span class="cite-inline">[8]</span> gradually mythologizing the image of the lost partner. The memorial illusion differs from honeymoon illusions in its fundamental direction: honeymoon illusions are anticipatory, oriented toward an open future; memorial illusions are commemorative, oriented toward a sealed past, and therefore form a stable plateau rather than declining further.</p>
+</section>
+
+<section class="section">
+  <div class="section-num">Section 5</div>
+  <h2>Perturbation Events</h2>
+  <p>The following events cannot be incorporated into the baseline function. They are <span class="key-term">local perturbations</span> that can occur at any stage, with non-linear and highly context-dependent effects on illusion degree.</p>
+
+  <div class="perturbation-item">
+    <div class="pert-icon">⚡</div>
+    <div class="pert-body">
+      <div class="pert-title">Infidelity / Betrayal</div>
+      <p class="pert-desc">Infidelity is a discontinuous collapse event, potentially driving illusion degree sharply downward in a very short time — approaching or briefly crossing ε. Reconciliation triggers an anomalous honeymoon rebound, typically with a lower peak and faster subsequent decay than a normal romance entry.</p>
+    </div>
+  </div>
+  <div class="perturbation-item">
+    <div class="pert-icon">✈️</div>
+    <div class="pert-body">
+      <div class="pert-title">Long-distance Relationship</div>
+      <p class="pert-desc">Reduces reality input frequency, artificially slowing illusion replacement and causing the curve to plateau or slightly rise in stages where it would normally decline. Physical distance partially returns the relationship's information structure to the Secret Crush state. Reunions tend to trigger strong honeymoon rebounds.</p>
+    </div>
+  </div>
+  <div class="perturbation-item">
+    <div class="pert-icon">🔄</div>
+    <div class="pert-body">
+      <div class="pert-title">Reconciliation</div>
+      <p class="pert-desc">Reconciliation dynamics depend on the reason and duration of separation. Repeated reconciliations show progressively lower honeymoon peaks, reflecting the cognitive reality that there are fewer illusions remaining to be drawn upon.</p>
+    </div>
+  </div>
+  <div class="perturbation-item">
+    <div class="pert-icon">💔</div>
+    <div class="pert-body">
+      <div class="pert-title">Termination of Unrequited Crush (Rejection / Voluntary Withdrawal)</div>
+      <p class="pert-desc">Rejection is one of the few events capable of injecting the other party's true will into the crush-holder's cognitive system unavoidably, causing a rapid illusion decline. Voluntary withdrawal, with no external triggering event, produces only extremely slow natural attrition. This explains why unrequited crushes with no definitive ending often require far longer to fully dissolve than ordinary breakups.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-num">Section 6</div>
+  <h2>Limitations and Future Research Directions</h2>
+  <p>The central limitation of this framework is the <span class="key-term">non-operationalizability of quantification</span>. "Illusion degree" as a psychological construct currently lacks a widely accepted measurement instrument. Murray and Holmes's "idealization discrepancy score" is the closest available indirect measure,<span class="cite-inline">[1]</span> but it captures only positive idealization and not the full range of illusion forms. Quantification of the individual coefficient k remains unresolved — attachment theory offers a potential variable framework: anxiously attached individuals tend toward higher illusion levels and more pronounced honeymoon peaks; avoidantly attached individuals toward flatter curves.<span class="cite-inline">[9]</span></p>
+  <p>This framework is also currently applicable only to sequential monogamous romantic relationships. Non-mainstream relational structures (polyamory, asexuality, etc.) and cross-cultural variation in how each stage is defined may require substantive revision of the x-axis stage encoding. Finally, the fundamental methodological challenge of romantic experience being difficult to measure longitudinally means this framework will remain speculative-theoretical for the foreseeable future. But as Proust observed, love is itself a form of epistemological failure — a subject that demands its own researchers be implicated in it, and that may have always resisted objective quantification.</p>
+</section>
+
+<div class="footnote-section">
+  <h4>References</h4>
+  <ol class="footnote-list">
+    <li>Murray, S.L. & Holmes, J.G. (1997). A Leap of Faith? Positive Illusions in Romantic Relationships. <em>Journal of Personality and Social Psychology</em>, 73(3), 586–610.</li>
+    <li>Proust, M. (1913–1927). <em>À la recherche du temps perdu</em>. Paris: Gallimard.</li>
+    <li>Kant, I. (1781). <em>Kritik der reinen Vernunft</em>. Riga: Hartknoch.</li>
+    <li>Frankfurt, H.G. (2004). <em>The Reasons of Love</em>. Princeton: Princeton University Press.</li>
+    <li>Jung, C.G. (1934). Archetypes of the Collective Unconscious. <em>Collected Works</em>, Vol. 9i.</li>
+    <li>Fisher, H., Aron, A., & Brown, L.L. (2005). Romantic Love: An fMRI Study of a Neural Mechanism for Mate Choice. <em>Journal of Comparative Neurology</em>, 493(1), 58–62.</li>
+    <li>Levinas, E. (1961). <em>Totalité et Infini</em>. The Hague: Martinus Nijhoff.</li>
+    <li>Walker, W.R., Skowronski, J.J., & Thompson, C.P. (2003). Life is pleasant — and memory helps to keep it that way. <em>Review of General Psychology</em>, 7(2), 203–210.</li>
+    <li>Bowlby, J. (1969–1980). <em>Attachment and Loss</em>, Vols. 1–3. London: Hogarth Press.</li>
+    <li>Beck, A.T. (1979). <em>Cognitive Therapy of Depression</em>. New York: Guilford. [Schema revision]; Cacioppo, J.T. & Berntson, G.G. (1994). <em>Psychological Bulletin</em>, 115(3). [Emotional habituation]</li>
+  </ol>
+</div>
+
+</div>
+</body>
+</html>
